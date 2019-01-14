@@ -1,0 +1,56 @@
+#!/bin/bash
+# (c) Xavier Gandillot - 2019
+
+echo "Statically building go files ..."
+# disable use of C from GO, forcing to recompile librairies, declare os and architecture
+CGO_ENABLED=0
+GOOS=linux
+GOARCH=amd64
+
+############ flags explanation set to build statically linked binaries ########
+
+### go build flags ###
+# -a
+#       force rebuilding of packages that are already up-to-date.
+# -ldflags '[pattern=]arg list'
+#       arguments to pass on each go tool link invocation.
+# -tags 'tag list'
+#	      a space-separated list of build tags to consider satisfied during the
+#	      build. For more information about build tags, see the description of
+#	      build constraints in the documentation for the go/build package.
+
+#### go tool link flags ###
+# -extldflags flags
+#     	Set space-separated flags to pass to the external linker (gcc)
+# -s
+#	      Omit the symbol table and debug information.
+# -w
+#     	Omit the DWARF symbol table.
+
+### gcc ldflags ###
+# -static
+#       On systems that support dynamic linking, this overrides -pie and prevents
+#       linking with the shared libraries.
+#       On other systems, this option has no effect.
+
+### undertanding netgo vs netcgo (or cgo)  tags
+#
+# When the net package is compiled, it choose to use a "pure go DNS resolver"
+# (netGo) or a cgo based resolver (netcgo), that calls C librairy routines.
+# "netgo" is normally the default, but for some strange reason, it does not work
+# if the netgo constraint tag is not specified ...
+########################################################################
+go build -a -tags netgo -ldflags='-w -s -extldflags "-static"' -o main *.go
+
+## Building the docker image
+IMAGE=$( docker build -q . )
+SIZE=$( docker image inspect $IMAGE --format='{{.Size}}' )
+
+echo "Just build image : $IMAGE"
+echo "Image size is : $SIZE bytes"
+
+## Running the container
+docker run --rm -it -p 8080:8080 $IMAGE
+
+## remove IMAGE
+docker rmi $IMAGE
