@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+var port = 8080
+
 // defaultHandler print a message with the path information
 func defaultHandler(w http.ResponseWriter, r *http.Request) {
 	var p = r.URL.Path
@@ -35,21 +37,24 @@ func stopLater(d time.Duration) {
 	os.Exit(0)
 }
 
-//main launches server
-func main() {
-
-	fmt.Println("Starting demo server on port 8080")
-	fmt.Println("Connect to either :")
-	fmt.Println("      http://localhost:8080/something")
-	fmt.Println("      http://localhost:8080/time")
-	fmt.Println("      http://localhost:8080/quit")
-
-	// define routes
-	// best not to use global defaultMux for security reasons
+// define routes, creting a local ServeMux
+// For security reasons, better not to rely on global defaultMux
+func getMux() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", defaultHandler)
 	mux.HandleFunc("/time", timeHandler)
 	mux.HandleFunc("/quit", stopHandler)
+	return mux
+}
 
-	log.Fatal(http.ListenAndServe(":8080", mux))
+//main launches server
+func main() {
+
+	fmt.Printf("Starting demo server on port %d\n", port)
+	fmt.Printf("Connect to either :\n")
+	fmt.Printf("      http://localhost:%d/something\n", port)
+	fmt.Printf("      http://localhost:%d/time\n", port)
+	fmt.Printf("      http://localhost:%d/quit\n", port)
+
+	log.Fatal(http.ListenAndServe(":8080", getMux()))
 }
