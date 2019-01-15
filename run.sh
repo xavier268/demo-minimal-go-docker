@@ -1,7 +1,9 @@
 #!/bin/bash
 # (c) Xavier Gandillot - 2019
 
-echo "Statically building go files ..."
+echo "Building statically-linked go files"
+echo "This takes longer than the usual 'go build'"
+echo "Please, be patient ..."
 # disable use of C from GO, forcing to recompile librairies, declare os and architecture
 CGO_ENABLED=0
 GOOS=linux
@@ -41,13 +43,14 @@ GOARCH=amd64
 # if the netgo constraint tag is not specified ...
 ########################################################################
 go build -a -tags netgo -ldflags='-w -s -extldflags "-static"' -o main *.go
+echo "Done."
 
 ## Building the docker image
 IMAGE=$( docker build -q . )
 SIZE=$( docker image inspect $IMAGE --format='{{.Size}}' )
-
+SIZE=$(( $SIZE / 1000 ))
 echo "Just build image : $IMAGE"
-echo "Image size is : $SIZE bytes"
+echo "Image size is : $SIZE Kb"
 
 ## Running the container
 docker run --rm -it -p 8080:8080 $IMAGE
