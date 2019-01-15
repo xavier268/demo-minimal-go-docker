@@ -8,20 +8,23 @@ import (
 	"time"
 )
 
-func testHandler(w http.ResponseWriter, r *http.Request) {
+// defaultHandler print a message with the path information
+func defaultHandler(w http.ResponseWriter, r *http.Request) {
 	var p = r.URL.Path
-	fmt.Fprintf(w, "Hi there, you typed %s", p)
-	if p == "/quit" {
-		// This will never appear. Why ?
-		fmt.Fprintf(w, "\nStopping the server in 2 seconds")
-		// Using a goroutine, to allow response time to be sent ...
-		go stopLater(2 * time.Second)
-	}
+	fmt.Fprintf(w, "The path was : %s", p)
 }
 
+// timeHandler give current server time
 func timeHandler(w http.ResponseWriter, r *http.Request) {
 	tm := time.Now().Format(time.RFC1123)
 	w.Write([]byte("The time is: " + tm))
+}
+
+// stopHandler triggers a server stop 2 seconds later
+func stopHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "\nThe server will stop in 2 seconds")
+	// Using a goroutine, to allow response time to be sent ...
+	go stopLater(2 * time.Second)
 }
 
 // stopLater waits for duration before stoppping everything
@@ -41,7 +44,9 @@ func main() {
 	fmt.Println("      http://localhost:8080/time")
 	fmt.Println("      http://localhost:8080/quit")
 
-	http.HandleFunc("/", testHandler)
+	http.HandleFunc("/", defaultHandler)
 	http.HandleFunc("/time", timeHandler)
+	http.HandleFunc("/quit", stopHandler)
+
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
