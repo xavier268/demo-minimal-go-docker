@@ -32,10 +32,10 @@ func stopLater(d time.Duration) {
 	fmt.Printf("Server will stop in %v  \n", d)
 	time.Sleep(d)
 	fmt.Println("Server stopped !")
-	os.Exit(43)
+	os.Exit(0)
 }
 
-//
+//main launches server
 func main() {
 
 	fmt.Println("Starting demo server on port 8080")
@@ -44,9 +44,12 @@ func main() {
 	fmt.Println("      http://localhost:8080/time")
 	fmt.Println("      http://localhost:8080/quit")
 
-	http.HandleFunc("/", defaultHandler)
-	http.HandleFunc("/time", timeHandler)
-	http.HandleFunc("/quit", stopHandler)
+	// define routes
+	// best not to use global defaultMux for security reasons
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", defaultHandler)
+	mux.HandleFunc("/time", timeHandler)
+	mux.HandleFunc("/quit", stopHandler)
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":8080", mux))
 }
