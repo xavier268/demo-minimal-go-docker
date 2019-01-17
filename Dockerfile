@@ -1,3 +1,3 @@
 FROM scratch
-ADD bin/main /main
+ADD bin/main.static /main
 CMD ["/main"]

@@ -42,7 +42,7 @@ GOARCH=amd64
 # "netgo" is normally the default, but for some strange reason, it does not work
 # if the netgo constraint tag is not specified ...
 ########################################################################
-go build -a -tags netgo -ldflags='-w -s -extldflags "-static"' -o bin/main ./main
+go build -a -tags netgo -ldflags='-w -s -extldflags "-static"' -o bin/main.static  ./main
 echo "Done."
 
 ## Building the docker image
