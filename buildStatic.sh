@@ -44,16 +44,3 @@ GOARCH=amd64
 ########################################################################
 go build -a -tags netgo -ldflags='-w -s -extldflags "-static"' -o bin/main.static  ./main
 echo "Done."
-
-## Building the docker image
-IMAGE=$( docker build -q . )
-SIZE=$( docker image inspect $IMAGE --format='{{.Size}}' )
-SIZE=$(( $SIZE / 1000 ))
-echo "Just build image : $IMAGE"
-echo "Image size is : $SIZE Kb"
-
-## Running the container
-docker run --rm -it -p 8080:8080 $IMAGE
-
-## remove IMAGE
-docker rmi $IMAGE
