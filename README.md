@@ -7,9 +7,9 @@ It uses statically, sized-optimized go compilation, and an empty docker image wi
 
 Run *runDocker.sh* launch and test the minimal container.
 
-It will compile a static version of the file, if needed using *buildStatic.sh*. I
+It will compile a static version of the file, if needed using *buildStatic.sh*.
 
-It will then create a temporary docker image, dispaly its size, run a container, and cleanup everything on exiting.
+It will then create a temporary docker image, display its size, run a container, and cleanup everything on exiting.
 
 # Static compilation for Linux
 
