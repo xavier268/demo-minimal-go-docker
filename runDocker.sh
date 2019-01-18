@@ -7,7 +7,7 @@ echo "Running a docker container from the static binary"
 docker info >> /dev/null
 if [ $? -ne 0 ] ; then
   echo "Docker does not seem to be available on your system ?"
-  exit 
+  exit
 fi
 #Check if static binary already exists. Compile if necessary.
 if [ ! -f bin/main.static ] ; then

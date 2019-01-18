@@ -1,3 +1,4 @@
+// Package main defines a set of demo handlers it uses
 package main
 
 import (

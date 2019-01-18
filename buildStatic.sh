@@ -42,5 +42,5 @@ GOARCH=amd64
 # "netgo" is normally the default, but for some strange reason, it does not work
 # if the netgo constraint tag is not specified ...
 ########################################################################
-go build -a -tags netgo -ldflags='-w -s -extldflags "-static"' -o bin/main.static  ./main
+go build -a -tags netgo -ldflags='-w -s -extldflags "-static"' -o bin/main.static  ./*.go
 echo "Done."
